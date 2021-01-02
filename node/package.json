@@ -1,0 +1,10 @@
+{
+	"name": "griffin-node",
+	"version": "0.1.0",
+	"main": "index.js",
+	"license": "BSD-3-Clause",
+	"dependencies": {
+		"griffin-core": "file:../core",
+		"gun": "github:amark/gun"
+	}
+}
