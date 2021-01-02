@@ -1,5 +1,64 @@
+const bip39 = require("bip39")
+const Collection = require("./collection")
+
+function Namespace(SEA, user, name) {
+	const db = user.get("@" + name)
+	let key = user._.sea
+
+	async function gen() {
+		const key = bip39.generateMnemonic()
+		db.put({ key: true, key_test: await SEA.encrypt(key, key) })
+		return key
+	}
+
+	function auth(user_key) {
+		return new Promise((res, rej) => {
+			db.get("key").once(is_key => {
+				if (!is_key) {
+					res()
+					return
+				}
+				db.get("key_test").once(data => {
+					if (!data) {
+						rej("Key was not found")
+						return
+					}
+					SEA.decrypt(data, user_key)
+						.then(result => {
+							if (user_key === result) {
+								key = user_key
+								res()
+							} else {
+								rej("Key was not valid")
+							}
+						})
+						.catch(() => rej("Key was not valid"))
+				})
+			})
+		})
+	}
+
+	function collection(name) {
+		return new Promise((res, rej) => {
+			db.get("key").once(is_key => {
+				if (is_key && key === user._.sea) {
+					rej("Namespace requires user generated key")
+				} else {
+					res(Collection(SEA, db, key))
+				}
+			})
+		})
+	}
+
+	return {
+		gen,
+		auth,
+		collection,
+	}
+}
+
 function Griffin(options) {
-	let { gun, relays, skynet } = options
+	let { gun, SEA, relays, skynet } = options
 	gun.opt({ peers: relays })
 	let user = null
 
@@ -48,14 +107,14 @@ function Griffin(options) {
 
 	function opt(options) {
 		if (user === null) {
-			throw new Error("User is null")
+			throw new Error("User is not logged in")
 		}
 		user.get("griffin").put({ options })
 	}
 
 	function leave() {
 		if (user === null) {
-			throw new Error("User is null")
+			throw new Error("User is not logged in")
 		}
 		user.leave()
 		if (!user._.sea) {
@@ -68,7 +127,7 @@ function Griffin(options) {
 
 	function del(username, password) {
 		if (user === null) {
-			rej("User is null")
+			rej("User is not logged in")
 		}
 		return new Promise((res, rej) => {
 			user.delete(username, password, ack => {
@@ -86,8 +145,11 @@ function Griffin(options) {
 		return user !== null
 	}
 
-	function namespace(ns) {
-		// return Namespace(ns)
+	function namespace(name) {
+		if (user === null) {
+			throw new Error("User is not logged in")
+		}
+		return Namespace(SEA, user, name)
 	}
 
 	return {

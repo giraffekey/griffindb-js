@@ -9,6 +9,7 @@ function Griffin(options) {
 			// peers: ["https://griffin-gun.lib"],
 			peers: [],
 		}),
+		SEA: Gun.SEA,
 		relays: (options && options.relays) || [],
 		skynet: (options && options.skynet) || "https://siasky.net",
 	})

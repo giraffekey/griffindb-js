@@ -1,3 +1,6 @@
 /browser/node_modules
 /core/node_modules
 /node/node_modules
+
+radata
+test.js

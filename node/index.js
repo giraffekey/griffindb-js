@@ -1,5 +1,5 @@
 const griffin = require("griffin-core")
-const Gun = require("gun/gun")
+const Gun = require("gun")
 require("gun/sea")
 
 function Griffin(options) {
@@ -9,6 +9,7 @@ function Griffin(options) {
 			// peers: ["https://griffin-gun.lib"],
 			peers: [],
 		}),
+		SEA: Gun.SEA,
 		relays: (options && options.relays) || [],
 		skynet: (options && options.skynet) || "https://siasky.net",
 	})
