@@ -6,7 +6,7 @@ require("gun/lib/webrtc")
 function Griffin(options) {
 	return griffin.Griffin({
 		gun: Gun({
-			// peers: ["https://griffin-gun.lib"],
+			// peers: ["https://griffin-gun.lib/gun"],
 			peers: [],
 		}),
 		SEA: Gun.SEA,

@@ -1,24 +1,27 @@
 const bip39 = require("bip39")
 const Collection = require("./collection")
 
+/*
+ * The application's database, stored under a namespace
+ */
 function Namespace(SEA, user, name) {
 	const db = user.get("@" + name)
 	let key = user._.sea
 
 	async function gen() {
 		const key = bip39.generateMnemonic()
-		db.put({ key: true, key_test: await SEA.encrypt(key, key) })
+		db.put({ _key: true, _key_test: await SEA.encrypt(key, key) })
 		return key
 	}
 
 	function auth(user_key) {
 		return new Promise((res, rej) => {
-			db.get("key").once(is_key => {
+			db.get("_key").once(is_key => {
 				if (!is_key) {
 					res()
 					return
 				}
-				db.get("key_test").once(data => {
+				db.get("_key_test").once(data => {
 					if (!data) {
 						rej("Key was not found")
 						return
@@ -40,11 +43,11 @@ function Namespace(SEA, user, name) {
 
 	function collection(name) {
 		return new Promise((res, rej) => {
-			db.get("key").once(is_key => {
+			db.get("_key").once(is_key => {
 				if (is_key && key === user._.sea) {
 					rej("Namespace requires user generated key")
 				} else {
-					res(Collection(SEA, db, key))
+					res(Collection(SEA, db, name, key))
 				}
 			})
 		})
@@ -125,7 +128,7 @@ function Griffin(options) {
 		}
 	}
 
-	function del(username, password) {
+	function delete_(username, password) {
 		if (user === null) {
 			rej("User is not logged in")
 		}
@@ -157,7 +160,7 @@ function Griffin(options) {
 		auth,
 		opt,
 		leave,
-		delete: del,
+		delete: delete_,
 		online,
 		namespace,
 	}

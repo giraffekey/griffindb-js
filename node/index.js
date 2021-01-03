@@ -6,7 +6,7 @@ function Griffin(options) {
 	return griffin.Griffin({
 		gun: Gun({
 			s3: options && options.s3,
-			// peers: ["https://griffin-gun.lib"],
+			// peers: ["https://griffin-gun.lib/gun"],
 			peers: [],
 		}),
 		SEA: Gun.SEA,
