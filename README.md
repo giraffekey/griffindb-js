@@ -4,15 +4,11 @@ A peer-to-peer document-oriented database. Take back ownership over your data!
 
 Griffin is a decentralized database powered by [GUN](https://github.com/amark/gun) that implements MongoDB's query language. All data stored is automatically encrypted and distributed over a peer-to-peer network and can optionally be shared with others. It is a truly powerful database solution.
 
-## Status
-
-In very early development. I wouldn't recommend using it just yet.
-
 ## Usage
 
 In the future: `yarn add griffin-browser` or `yarn add griffin-node`
 
-For now, it is unreleased.
+Currently, it is unreleased.
 
 ```js
 import Griffin from "griffin-browser"
@@ -26,11 +22,12 @@ await db.auth(app_specific_key)
 
 const dogs = await db.collection("dogs")
 await dogs.insert([
-	{ name: "Gordon", color: "black", owners: ["John", "Cindy"] },
-	{ name: "Pooch", color: "brown", owners: ["John", "Cindy"] },
-	{ name: "Snuffles", color: "brown", owners: ["Karen"] },
+	{ name: "Gordon", color: "black", age: 3, owners: ["John", "Cindy"] },
+	{ name: "Pooch", color: "brown", age: 5, owners: ["John", "Cindy"] },
+	{ name: "Snuffles", color: "brown", age: 7, owners: ["Karen"] },
 	...
 ]).many()
-const brown = await dogs.find({ color: "brown" }).sort({ name: 1 }).limit(10).many()
-console.log(brown)
+console.log(await dogs.find({ color: "brown" }).sort({ name: 1 }).one())
+console.log(await dogs.find({ name: { $or: ["Gordon", "Pooch"] } }).fields({ _id: 0 }).many())
+console.log(await dogs.find({ age: { $lt: 7, $gte: 3 } }).limit(10).many())
 ```
