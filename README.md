@@ -10,7 +10,7 @@ In very early development. I wouldn't recommend using it just yet.
 
 ## Usage
 
-In the future: `yarn add griffin-browser`
+In the future: `yarn add griffin-browser` or `yarn add griffin-node`
 
 For now, it is unreleased.
 

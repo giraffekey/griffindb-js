@@ -41,6 +41,7 @@ function insert(SEA, col, key, docs, options) {
 
 		const { ordered } = options
 		let ids = []
+		let promises = []
 
 		for (let i = 0; i < docs.length; i++) {
 			let doc = docs[i]
@@ -87,8 +88,6 @@ function insert(SEA, col, key, docs, options) {
 					return
 				}
 			} else {
-				let promises = []
-
 				promises.push(new Promise((res, rej) => {
 					col.get(id).put(doc, ack => {
 						if (ack.err) {
@@ -99,10 +98,10 @@ function insert(SEA, col, key, docs, options) {
 						}
 					})
 				}))
-
-				await pmap(promises, p => p, 30)
 			}
 		}
+
+		if (!ordered) await pmap(promises, p => p, 30)
 
 		res(ids)
 	})
