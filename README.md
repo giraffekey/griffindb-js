@@ -2,7 +2,7 @@
 
 A peer-to-peer document-oriented database. Take back ownership over your data!
 
-Griffin is a decentralized database powered by [GUN](https://github.com/amark/gun) that implements MongoDB's query language. All data stored is automatically encrypted and distributed over a peer-to-peer network and can optionally be shared with others. It is a truly powerful database solution.
+Griffin is a decentralized database powered by [GUN](https://github.com/amark/gun) that implements an API and query language similar to MongoDB. All data stored is automatically encrypted and distributed over a peer-to-peer network and can optionally be shared with others. It is a truly powerful database solution.
 
 ## Usage
 
