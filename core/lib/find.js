@@ -1,4 +1,5 @@
 const pmap = require("promise.map")
+const deepEqual = require("deep-equal")
 
 async function clean(col, doc) {
 	if (Object.prototype.toString.call(doc) === "[object Object]") {
@@ -33,6 +34,98 @@ async function clean(col, doc) {
 	}
 }
 
+function matches(doc, query) {
+	const entries = Object.entries(query)
+
+	for (let i = 0; i < entries.length; i++) {
+		const [field, cond] = entries[i]
+		const value = doc[field]
+
+		if (Object.prototype.toString.call(cond) === "[object Object]") {
+			if (cond.$not)
+				if (!matches(value, cond.$not)) continue
+				else return false
+			if (cond.$eq)
+				if (value === cond.$eq) continue
+				else return false
+			if (cond.$and) {
+				const queries = cond.$and
+				let match = true
+				
+				for (let i = 0; i < queries.length; i++) {
+					if (!matches(value, queries[i])) {
+						match = false
+						break
+					}
+				}
+
+				if (match) continue
+				else return false
+			}
+			if (cond.$or) {
+				const queries = cond.$or
+				let match = false
+				
+				for (let i = 0; i < queries.length; i++) {
+					if (matches(value, queries[i])) {
+						match = true
+						break
+					}
+				}
+
+				if (match) continue
+				else return false
+			}
+
+			const lt = cond.$lte ? value <= cond.$lte
+			         : cond.$lt  ? value <  cond.$lt
+			         : null
+
+			const gt = cond.$gte ? value >= cond.$gte
+			         : cond.$gt  ? value >  cond.$gt
+			         : null
+
+			if (lt === null && gt === null) continue
+			else if (lt && gt || lt === null && gt || gt === null && lt) continue
+			else return false
+		}
+
+		if (field === "$and") {
+			const queries = cond
+			let match = true
+			
+			for (let i = 0; i < queries.length; i++) {
+				if (!matches(doc, queries[i])) {
+					match = false
+					break
+				}
+			}
+
+			if (match) continue
+			else return false
+		}
+		if (field === "$or") {
+			const queries = cond
+			let match = false
+			
+			for (let i = 0; i < queries.length; i++) {
+				if (matches(doc, queries[i])) {
+					match = true
+					break
+				}
+			}
+
+			if (match) continue
+			else return false
+		}
+
+		if (value === cond) continue
+		else return false
+	}
+
+	return true
+}
+
 function find(SEA, col, key, query, options) {
 	return new Promise((res, rej) => {
 		let docs = []
@@ -57,7 +150,8 @@ function find(SEA, col, key, query, options) {
 					try {
 						doc = await SEA.decrypt(doc, key)
 						delete doc._
-						docs.push(await clean(col, doc))
+						doc = await clean(col, doc)
+						if (matches(doc, query)) docs.push(doc)
 					} catch(e) {
 						rej(e)
 						return
@@ -68,7 +162,9 @@ function find(SEA, col, key, query, options) {
 					const entries = Object.entries(options.sort)
 					const compare = (a, b, field, asc) => {
 						const compareType = (a, b) => {
-							if (typeof a === "number" && typeof b == "number") {
+							if (typeof a === "number" && typeof b == "number"
+							|| Object.prototype.toString.call(a) === "[object Date]"
+							&& Object.prototype.toString.call(b) === "[object Date]") {
 								return a - b
 							} else if (typeof a === "string" && typeof b === "string") {
 								return a.localeCompare(b)

@@ -29,6 +29,7 @@ await dogs.insert([
 	{ name: "Gordon", color: "black", owners: ["John", "Cindy"] },
 	{ name: "Pooch", color: "brown", owners: ["John", "Cindy"] },
 	{ name: "Snuffles", color: "brown", owners: ["Karen"] },
+	...
 ]).many()
 const brown = await dogs.find({ color: "brown" }).sort({ name: 1 }).limit(10).many()
 console.log(brown)
