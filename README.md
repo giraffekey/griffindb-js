@@ -31,3 +31,11 @@ console.log(await dogs.find({ color: "brown" }).sort({ name: 1 }).one())
 console.log(await dogs.find({ name: { $or: ["Gordon", "Pooch"] } }).fields({ _id: 0 }).many())
 console.log(await dogs.find({ age: { $lt: 7, $gte: 3 } }).limit(10).many())
 ```
+
+## Donations
+
+Feel free to donate! I plan on implementing the entire MongoDB API, a file storage API based on Sia/Skynet and other features involving shared data.
+
+I can work on this much more frequently with a more sustainable income. All donations will go to living expenses, assets, servers and Sia file storage costs (I plan on running my own Skynet portal).
+
+Liberapay: https://liberapay.com/giraffekey/
