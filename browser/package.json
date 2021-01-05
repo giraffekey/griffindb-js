@@ -4,7 +4,7 @@
 	"main": "index.js",
 	"license": "BSD-3-Clause",
 	"dependencies": {
-		"griffin-core": "file:../core",
+		"griffin-core": "^0.1.0",
 		"gun": "github:amark/gun"
 	}
 }

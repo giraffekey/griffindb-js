@@ -6,7 +6,7 @@ Griffin is a decentralized database powered by [GUN](https://github.com/amark/gu
 
 ## Usage
 
-`yarn add griffin-browser` or `yarn add griffin-node`
+`yarn add griffin-browser` or `yarn add griffin-nodejs`
 
 ```js
 import Griffin from "griffin-browser"

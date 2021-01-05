@@ -253,8 +253,10 @@ get-intrinsic@^1.0.0, get-intrinsic@^1.0.1, get-intrinsic@^1.0.2:
     has "^1.0.3"
     has-symbols "^1.0.1"
 
-"griffin-core@file:../core":
+griffin-core@^0.1.0:
   version "0.1.0"
+  resolved "https://registry.yarnpkg.com/griffin-core/-/griffin-core-0.1.0.tgz#9149078d3578805c22fb1df67ba1d9abf4943d50"
+  integrity sha512-DvG1Iq9yMIwCCI34na7jCxhe1BzFC1T7lDBt/iu3mfH/DhN5M5+j73+G85SC/B24UKaDLgm5iYR6gcpNtzwATw==
   dependencies:
     bip39 "^3.0.3"
     deep-equal "^2.0.5"
