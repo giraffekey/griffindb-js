@@ -1,5 +1,6 @@
 const Find = require("./find")
 const Insert = require("./insert")
+const Delete = require("./delete")
 
 /*
  * A document collection with a standardized schema
@@ -24,9 +25,22 @@ function Collection(SEA, db, name, key) {
 		return Insert(SEA, col, key, docs, options)
 	}
 
+	function delete_(query, options) {
+		query = query || {}
+		options = options || {}
+		options.limit = options.limit || 0
+		return Delete(SEA, col, key, query, options)
+	}
+
+	function drop() {
+		col.put(null)
+	}
+
 	return {
 		find,
 		insert,
+		delete: delete_,
+		drop,
 	}
 }
 
