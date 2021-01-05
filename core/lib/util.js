@@ -1,4 +1,34 @@
-async function clean(col, doc) {
+function clean(doc) {
+	if (Object.prototype.toString.call(doc) === "[object Object]") {
+		let obj = {}
+		const entries = Object.entries(doc)
+
+		for (let i = 0; i < entries.length; i++) {
+			const [key, value] = entries[i]
+			obj[key] = clean(value)
+		}
+
+		return obj
+	} else if (Array.isArray(doc)) {
+		let arr = { _array: true }
+
+		for (let i = 0; i < doc.length; i++) {
+			arr[i] = clean(doc[i])
+		}
+
+		return arr
+	} else if (doc === undefined) {
+		return null
+	} else if (doc === NaN) {
+		throw new Error("NaN is not allowed")
+	} else if (doc === Infinity) {
+		throw new Error("Infinity is not allowed")
+	} else {
+		return doc
+	}
+}
+
+async function unclean(col, doc) {
 	if (Object.prototype.toString.call(doc) === "[object Object]") {
 		if (doc._array) {
 			let arr = []
@@ -7,7 +37,7 @@ async function clean(col, doc) {
 
 			for (let i = 0; i < entries.length; i++) {
 				const [index, value] = entries[i]
-				arr[index] = await clean(col, value)
+				arr[index] = await unclean(col, value)
 			}
 
 			return arr
@@ -17,7 +47,7 @@ async function clean(col, doc) {
 
 			for (let i = 0; i < entries.length; i++) {
 				const [key, value] = entries[i]
-				obj[key] = await clean(col, value)
+				obj[key] = await unclean(col, value)
 			}
 
 			return obj
@@ -125,5 +155,6 @@ function matches(doc, query) {
 
 module.exports = {
 	clean,
+	unclean,
 	matches,
 }

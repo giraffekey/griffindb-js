@@ -1,5 +1,7 @@
 const Find = require("./find")
 const Insert = require("./insert")
+const Update = require("./update")
+const Replace = require("./replace")
 const Delete = require("./delete")
 
 /*
@@ -25,6 +27,21 @@ function Collection(SEA, db, name, key) {
 		return Insert(SEA, col, key, docs, options)
 	}
 
+	function update(query, updateDoc, options) {
+		query = query || {}
+		options = options || {}
+		options.limit = options.limit || 0
+		options.upset = options.upset || false
+		return Update(SEA, col, key, query, updateDoc, options)
+	}
+
+	function replace(query, replacement, options) {
+		query = query || {}
+		options = options || {}
+		options.upset = options.upset || false
+		return Replace(SEA, col, key, query, replacement, options)
+	}
+
 	function delete_(query, options) {
 		query = query || {}
 		options = options || {}
@@ -39,6 +56,8 @@ function Collection(SEA, db, name, key) {
 	return {
 		find,
 		insert,
+		update,
+		replace,
 		delete: delete_,
 		drop,
 	}

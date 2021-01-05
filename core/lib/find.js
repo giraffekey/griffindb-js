@@ -1,6 +1,6 @@
 const pmap = require("promise.map")
 const deepEqual = require("deep-equal")
-const { clean, matches } = require("./query")
+const { unclean, matches } = require("./util")
 
 function find(SEA, col, key, query, options) {
 	return new Promise((res, rej) => {
@@ -27,7 +27,7 @@ function find(SEA, col, key, query, options) {
 						try {
 							doc = await SEA.decrypt(doc, key)
 							delete doc._
-							doc = await clean(col, doc)
+							doc = await unclean(col, doc)
 							if (matches(doc, query)) docs.push(doc)
 						} catch(e) {
 							rej(e)

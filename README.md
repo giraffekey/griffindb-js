@@ -6,9 +6,7 @@ Griffin is a decentralized database powered by [GUN](https://github.com/amark/gu
 
 ## Usage
 
-In the future: `yarn add griffin-browser` or `yarn add griffin-node`
-
-Currently, it is unreleased.
+`yarn add griffin-browser` or `yarn add griffin-node`
 
 ```js
 import Griffin from "griffin-browser"
@@ -21,15 +19,20 @@ const app_specific_key = await db.gen() // This is an optional 12 word mnemonic 
 await db.auth(app_specific_key)
 
 const dogs = await db.collection("dogs")
+
 await dogs.insert([
 	{ name: "Gordon", color: "black", age: 3, owners: ["John", "Cindy"] },
 	{ name: "Pooch", color: "brown", age: 5, owners: ["John", "Cindy"] },
 	{ name: "Snuffles", color: "brown", age: 7, owners: ["Karen"] },
 	...
 ]).many()
+
 console.log(await dogs.find({ color: "brown" }).sort({ name: 1 }).one())
 console.log(await dogs.find({ name: { $or: ["Gordon", "Pooch"] } }).fields({ _id: 0 }).many())
 console.log(await dogs.find({ age: { $lt: 7, $gte: 3 } }).limit(10).many())
+
+await dogs.update({ age: 5 }, { $inc: { age: 1 } }).one()
+await dogs.replace({ name: "Gordon" }, { name: "Gordon Ramsey", color: "blonde", age: 54, owners: null })
 ```
 
 ## Donations

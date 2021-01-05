@@ -1,35 +1,6 @@
 const { v4: uuidv4 } = require("uuid")
 const pmap = require("promise.map")
-
-function clean(doc) {
-	if (Object.prototype.toString.call(doc) === "[object Object]") {
-		let obj = {}
-		const entries = Object.entries(doc)
-
-		for (let i = 0; i < entries.length; i++) {
-			const [key, value] = entries[i]
-			obj[key] = clean(value)
-		}
-
-		return obj
-	} else if (Array.isArray(doc)) {
-		let arr = { _array: true }
-
-		for (let i = 0; i < doc.length; i++) {
-			arr[i] = clean(doc[i])
-		}
-
-		return arr
-	} else if (doc === undefined) {
-		return null
-	} else if (doc === NaN) {
-		throw new Error("NaN is not allowed")
-	} else if (doc === Infinity) {
-		throw new Error("Infinity is not allowed")
-	} else {
-		return doc
-	}
-}
+const { clean } = require("./util")
 
 function insert(SEA, col, key, docs, options) {
 	return new Promise(async (res, rej) => {

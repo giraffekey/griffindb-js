@@ -1,5 +1,5 @@
 const pmap = require("promise.map")
-const { clean, matches } = require("./query")
+const { unclean, matches } = require("./util")
 
 function delete_(SEA, col, key, query, options) {
 	return new Promise((res, rej) => {
@@ -22,7 +22,7 @@ function delete_(SEA, col, key, query, options) {
 						try {
 							doc = await SEA.decrypt(doc, key)
 							delete doc._
-							doc = await clean(col, doc)
+							doc = await unclean(col, doc)
 							if (matches(doc, query)) {
 								j++
 								promises.push(new Promise((res, rej) => {
