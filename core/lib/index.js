@@ -163,6 +163,8 @@ function Griffin(options) {
 		delete: delete_,
 		online,
 		namespace,
+		gun,
+		SEA,
 	}
 }
 
