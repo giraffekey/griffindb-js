@@ -6,12 +6,11 @@ require("gun/lib/webrtc")
 function Griffin(options) {
 	return griffin.Griffin({
 		gun: Gun({
-			// peers: ["https://griffin-gun.lib/gun"],
-			peers: [],
+			peers: ["https://griffin-gun-us.herokuapp.com/gun"],
 		}),
 		SEA: Gun.SEA,
-		relays: (options && options.relays) || [],
-		skynet: (options && options.skynet) || "https://siasky.net",
+		peers: options?.peers || [],
+		skynet: options?.skynet || "https://siasky.net",
 	})
 }
 

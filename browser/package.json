@@ -1,10 +1,10 @@
 {
 	"name": "griffin-browser",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"main": "index.js",
 	"license": "BSD-3-Clause",
 	"dependencies": {
-		"griffin-core": "^0.1.0",
+		"griffin-core": "^0.1.1",
 		"gun": "github:amark/gun"
 	}
 }

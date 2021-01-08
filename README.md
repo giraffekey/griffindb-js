@@ -12,6 +12,12 @@ Griffin is a decentralized database powered by [GUN](https://github.com/amark/gu
 import Griffin from "griffin-browser"
 
 const griffin = Griffin()
+
+await griffin.create("username", "password", {
+	peers: ..., // a list of GUN peers the user says they want to use
+	skynet: ..., // which skynet portal the user wants to use
+}, false) // false means you do not require unique usernames
+
 await griffin.auth("username", "password")
 
 const db = griffin.namespace("my-app")

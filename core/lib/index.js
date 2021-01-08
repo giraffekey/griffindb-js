@@ -61,8 +61,9 @@ function Namespace(SEA, user, name) {
 }
 
 function Griffin(options) {
-	let { gun, SEA, relays, skynet } = options
-	gun.opt({ peers: relays })
+	let { gun, SEA, peers, skynet } = options
+	console.log(peers)
+	gun.opt({ peers })
 	let user = null
 
 	function create(username, password, options, unique) {
@@ -76,8 +77,8 @@ function Griffin(options) {
 							rej("User already created!")
 						} else {
 							created_user.get("griffin").get("options").put({
-								relays: (options && options.relays) || [],
-								skynet: (options && options.skynet) || "https://siasky.net",
+								peers: options?.peers || [],
+								skynet: options?.skynet || "https://siasky.net",
 							})
 							res(ack.pub)
 						}
@@ -96,7 +97,7 @@ function Griffin(options) {
 					user = auth_user
 					const fn = options => {
 						if (options) {
-							gun.opt({ peers: options.relays })
+							gun.opt({ peers: options.peers })
 							skynet = options.skynet
 						}
 					}
