@@ -26,11 +26,11 @@ async function server(options) {
 		server = http.createServer(Gun.serve(__dirname))
 	}
 
-	const bootstraps = options?.bootstraps || ["https://griffin-bootstrap-us.herokuapp.com"]
+	const bootstraps = options?.bootstraps || ["/dnsaddr/griffin-bootstrap-us.herokuapp.com/p2p/QmRg829xJ7Vpc3tW3sw4dhmie2WF1fCHExZkvFAAcEfjih"]
 	let gun_peers = options?.peers || []
 	if (bootstraps) gun_peers.push(...bootstraps)
 
-	const port = options?.port || 8765
+	const port = options?.port || process.env.PORT || 8765
 	const gun = Gun({
 		web: server.listen(port),
 		peers: gun_peers,
