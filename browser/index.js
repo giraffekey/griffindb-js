@@ -4,12 +4,13 @@ require("gun/sea")
 require("gun/lib/webrtc")
 
 function Griffin(options) {
+	const boostraps = options?.bootstraps || ["https://griffin-bootstrap-us.herokuapp.com"]
+
 	return griffin.Griffin({
 		gun: Gun({
-			peers: ["https://griffin-gun-us.herokuapp.com/gun"],
+			peers: options?.peers || options,
 		}),
 		SEA: Gun.SEA,
-		peers: options?.peers || [],
 		skynet: options?.skynet || "https://siasky.net",
 	})
 }

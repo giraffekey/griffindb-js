@@ -14,7 +14,6 @@ import Griffin from "griffin-browser"
 const griffin = Griffin()
 
 await griffin.create("username", "password", {
-	peers: ..., // a list of GUN peers the user says they want to use
 	skynet: ..., // which skynet portal the user wants to use
 }, false) // false means you do not require unique usernames
 
@@ -39,6 +38,24 @@ console.log(await dogs.find({ age: { $lt: 7, $gte: 3 } }).limit(10).many())
 
 await dogs.update({ age: 5 }, { $inc: { age: 1 } }).one()
 await dogs.replace({ name: "Gordon" }, { name: "Gordon Ramsey", color: "blonde", age: 54, owners: null })
+```
+
+## Contributing to the network
+
+Griffin relays operate over a libp2p network to enable relay switching and limited single point of failure. Your relay will be used by random members of the entire Griffin network.
+
+They are very simple to setup. S3 backed storage relays are a big plus.
+
+```js
+const Griffin = require("griffin-node")
+
+Griffin.server({
+	s3: {
+		key: "",
+	    secret: "",
+	    bucket: "",
+	},
+})
 ```
 
 ## Donations

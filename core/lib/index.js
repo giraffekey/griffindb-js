@@ -2,7 +2,7 @@ const bip39 = require("bip39")
 const Collection = require("./collection")
 
 /*
- * The application's database, stored under a namespace
+ * The application"s database, stored under a namespace
  */
 function Namespace(SEA, user, name) {
 	const db = user.get("@" + name)
@@ -61,9 +61,7 @@ function Namespace(SEA, user, name) {
 }
 
 function Griffin(options) {
-	let { gun, SEA, peers, skynet } = options
-	console.log(peers)
-	gun.opt({ peers })
+	let { gun, SEA, skynet } = options
 	let user = null
 
 	function create(username, password, options, unique) {
@@ -77,7 +75,6 @@ function Griffin(options) {
 							rej("User already created!")
 						} else {
 							created_user.get("griffin").get("options").put({
-								peers: options?.peers || [],
 								skynet: options?.skynet || "https://siasky.net",
 							})
 							res(ack.pub)
@@ -97,7 +94,6 @@ function Griffin(options) {
 					user = auth_user
 					const fn = options => {
 						if (options) {
-							gun.opt({ peers: options.peers })
 							skynet = options.skynet
 						}
 					}
