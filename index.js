@@ -1,3 +1,3 @@
-const Griffin = require("./node")
+const Griffin = require("griffin-node")
 
 Griffin.server({ bootstraps: [] })
