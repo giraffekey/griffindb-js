@@ -26,7 +26,7 @@ async function server(options) {
 		server = http.createServer(Gun.serve(__dirname))
 	}
 
-	const bootstraps = options?.bootstraps || []
+	const bootstraps = options?.bootstraps || ["https://griffin-bootstrap-us.herokuapp.com"]
 	let gun_peers = options?.peers || []
 	if (bootstraps) gun_peers.push(...bootstraps)
 
@@ -80,6 +80,7 @@ async function server(options) {
 		const peer = conn.remotePeer.toB58String()
 		if (!peers[peer]?.includes("/p2p/")) peers[peer] = `${conn.remoteAddr.toString()}/gun`
 		gun.opt({ peers: get_peers(peers) })
+		console.log(get_peers(peers))
 	})
 
 	node.connectionManager.on('peer:disconnect', (conn) => {

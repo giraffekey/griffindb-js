@@ -5,6 +5,9 @@
   "repository": "https://github.com/GiraffeKey/griffin.git",
   "author": "GiraffeKey <giraffekey@tutanota.com>",
   "license": "MIT",
+  "scripts": {
+  	"start": "node index.js"
+  },
   "dependencies": {
   	"griffin-node": "file:./node"
   }
