@@ -1,6 +1,6 @@
 {
 	"name": "griffin-nodejs",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"main": "index.js",
 	"license": "BSD-3-Clause",
 	"dependencies": {

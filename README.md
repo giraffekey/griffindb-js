@@ -47,7 +47,7 @@ Griffin relays operate over a libp2p network to enable relay switching and limit
 They are very simple to setup. S3 backed storage relays are a big plus.
 
 ```js
-const Griffin = require("griffin-node")
+const Griffin = require("griffin-nodejs")
 
 Griffin.server({
 	s3: {
