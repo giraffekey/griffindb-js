@@ -1,9 +1,16 @@
 {
   	"name": "griffin-bootstrap",
   	"version": "1.0.0",
-  	"main": "index.js",
   	"license": "MIT",
+  	"engines": {
+        "node": "15.X",
+        "npm": "7.X",
+        "yarn": "1.22.X"
+  	},
+  	"scripts": {
+        "start": "node index.js"
+  	},
   	"dependencies": {
-    	"griffin-nodejs": "0.1.9"
+        "griffin-nodejs": "0.1.12"
   	}
 }

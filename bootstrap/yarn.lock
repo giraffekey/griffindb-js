@@ -698,10 +698,10 @@ griffin-core@^0.1.2:
     promise.map "^0.3.1"
     uuid "^8.3.2"
 
-griffin-nodejs@0.1.9:
-  version "0.1.9"
-  resolved "https://registry.yarnpkg.com/griffin-nodejs/-/griffin-nodejs-0.1.9.tgz#44bb8c749448f6bb50a08494a360cbbe0febdfe7"
-  integrity sha512-xwMFSqrT3gw7Ivxj4ESKIimk5AI1VZcN4wM2aG2nLlORRNtRYgPX1hoKwhWoQyuHz8RebDtc5bnJfH6IetOIQw==
+griffin-nodejs@0.1.12:
+  version "0.1.12"
+  resolved "https://registry.yarnpkg.com/griffin-nodejs/-/griffin-nodejs-0.1.12.tgz#be3ba16c4d65c4a09e1a7f706038489d00197e3d"
+  integrity sha512-ugR2A+ZauUgB1zI2wcuE0r2X/C8vUYqRL3NEnA9wino0AhKJHJ7UACXQ35VxRP+TKCTyUi2ACCV1TPYDD1wqBQ==
   dependencies:
     array-shuffle "^2.0.0"
     griffin-core "^0.1.2"

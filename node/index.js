@@ -15,14 +15,16 @@ const https = require("https")
 const shuffle = require("array-shuffle")
 
 function gun_config(options) {
-	const bootstraps = options.bootstraps || []
+	const bootstraps = options.bootstraps || ["http://159.203.81.101"]
 
 	const port = parseInt(options.port || process.env.PORT) || 8765
 
 	let config = {
-		peers: options.peers,
-		s3: options.s3,
-		localStorage: false,
+		gun: {
+			peers: options.peers,
+			s3: options.s3,
+			localStorage: false,
+		},
 		bootstraps,
 		port,
 	}
@@ -39,7 +41,7 @@ function gun_config(options) {
 			server = http.createServer(Gun.serve(__dirname))
 		}
 
-		config.web = server.listen(port)
+		config.gun.web = server.listen(port + 1)
 	}
 
 	return config
@@ -55,26 +57,48 @@ async function P2P(gun, bootstraps, port, server) {
   	let config = {}
 
   	if (bootstraps.length) {
-  		modules.peerDiscovery.push(Bootstrap)
-  		config.peerDiscovery = {
-	  		autoDial: true,
-	  		[Bootstrap.tag]: {
-	    		enabled: true,
-	    		list: bootstraps,
-	    	},
-	  	}
+  		let list = []
+
+  		for (let i = 0; i < bootstraps.length; i++) {
+  			const bootstrap = bootstraps[i]
+  			const url = bootstrap + "/p2p"
+
+  			await new Promise((resolve) => {
+  				const protocol = bootstrap.startsWith("https") ? https : http
+  				const req = protocol.request(url, {}, res => {
+		  			let data = ""
+		  			res.on("data", chunk => (data += chunk))
+		  			res.on("end", () => {
+		  				list.push(data)
+		  				resolve()
+		  			})
+				})
+				req.on("error", resolve)
+				req.end()
+  			})
+  		}
+
+  		if (list.length) {
+  			modules.peerDiscovery.push(Bootstrap)
+  			config.peerDiscovery = {
+		  		autoDial: true,
+		  		[Bootstrap.tag]: {
+		    		enabled: true,
+		    		list,
+		    	},
+		  	}
+  		}
 	}
 
 	const node = await Libp2p.create({
 	  	addresses: {
-	    	listen: [`/ip4/0.0.0.0/tcp/${port}`]
+	    	listen: ["/ip4/0.0.0.0/tcp/0"]
 	  	},
 	  	modules,
 	  	config,
 	})
 
 	await node.start()
-	process.env.LIBP2P = node.peerId.toB58String()
 
 	node.multiaddrs.forEach(addr => {
 	  	console.log(`Listening on: ${addr.toString()}/p2p/${node.peerId.toB58String()}`)
@@ -88,9 +112,8 @@ async function P2P(gun, bootstraps, port, server) {
 		const peer = conn.remotePeer.toB58String()
 		if (server) console.log(peer)
 		if (!peers[peer]?.includes("/p2p/")){
-			const [first, second] = conn.remoteAddr.protos().map(p => p.name)
-			const {address, port} = conn.remoteAddr.nodeAddress()
-			peers[peer] = `/${first}/${address}/${second}/${port - 1}/gun`
+			const { address } = conn.remoteAddr.nodeAddress()
+			peers[peer] = `http://${address}/gun`
 		}
 		gun.opt({ peers: gun_peers() })
 	})
@@ -101,12 +124,57 @@ async function P2P(gun, bootstraps, port, server) {
 	})
 
 	if (server) {
-		const requestListener = (req, res) => {
-			res.setHeader("Content-Type", "application/json")
-			res.writeHead(200)
-    		res.end(JSON.stringify({ peers: gun_peers() }))
+		const proxyPass = (req, res, options) => {
+			let data = ""
+
+			req.on("data", chunk => (data += chunk))
+			req.on("end", () => {
+				const { method, headers } = req
+				const options2 = {
+					...options,
+					method,
+					headers,
+				}
+
+				const req2 = http.request(options2, res2 => {
+					let data = ""
+					res2.on("data", chunk => (data += chunk))
+					res2.on("end", () => res.end(data))
+				})
+				if (data) req2.write(data)
+				req2.end()
+			})
 		}
-		http.createServer(requestListener).listen(port + 1, "0.0.0.0")
+
+		const requestListener = (req, res) => {
+			if (req.url === "/gun") {
+				proxyPass(req, res, {
+					hostname: "127.0.0.1",
+ 					port: port + 1,
+					path: "/gun",
+				})
+			} else if (req.url === "/p2p") {
+				res.writeHead(200)
+				let addr = ""
+				for (let i = 0; i < node.multiaddrs.length; i++) {
+					const multi = node.multiaddrs[i].toString()
+					if (!multi.startsWith("/ip4/127.") && !multi.startsWith("/ip4/10.")) {
+						addr = multi
+						break
+					}
+				}
+				addr += "/p2p/" + node.peerId.toB58String()
+				res.end(addr)
+			} else if (req.url === "/api") {
+				res.setHeader("Content-Type", "application/json")
+				res.writeHead(200)
+    			res.end(JSON.stringify({ peers: gun_peers() }))
+			} else {
+				res.writeHead(200)
+    			res.end()
+			}
+		}
+		http.createServer(requestListener).listen(port, "0.0.0.0")
 	}
 
 	const stop = async () => {
@@ -122,11 +190,8 @@ async function Griffin(options) {
 	options = options || {}
 	options.server = options.server === true || options.server === undefined
 	const config = gun_config(options)
-	const gun = Gun(config)
-	if (options.server) {
-		console.log("Griffin node started on port " + config.port)
-	}
-	await P2P(gun, config.bootstraps, config.port + 1, options.server)
+	const gun = Gun(config.gun)
+	await P2P(gun, config.bootstraps, config.port, options.server)
 	return griffin.Griffin({
 		gun,
 		SEA: Gun.SEA,
@@ -137,9 +202,8 @@ async function Griffin(options) {
 Griffin.server = async (options) => {
 	options = options || {}
 	const config = gun_config(options)
-	const gun = Gun(config)
-	console.log("Griffin node started on port " + config.port)
-	await P2P(gun, config.bootstraps, config.port + 1, true)
+	const gun = Gun(config.gun)
+	await P2P(gun, config.bootstraps, config.port, true)
 }
 
 module.exports = Griffin

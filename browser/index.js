@@ -5,7 +5,7 @@ require("gun/lib/webrtc")
 const shuffle = require("array-shuffle")
 
 function Griffin(options) {
-	const bootstraps = options?.bootstraps || []
+	const bootstraps = options?.bootstraps || ["http://159.203.81.101"]
 
 	const gun = Gun({
 		peers: options?.peers || options,
@@ -18,7 +18,7 @@ function Griffin(options) {
 
 		let j = 0
 		for (let i = 0; i < bootstraps.length; i++) {
-			const url = bootstraps[i]
+			const url = bootstraps[i] + "/api"
 			fetch(url).then(data => {
 				peers.add(...data.peers)
 				j++
