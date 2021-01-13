@@ -5,8 +5,7 @@ require("gun/lib/webrtc")
 const shuffle = require("array-shuffle")
 
 function Griffin(options) {
-	const bootstraps = options?.bootstraps ||
-		["https://griffin-bootstrap-us.herokuapp.com/api"]
+	const bootstraps = options?.bootstraps || []
 
 	const gun = Gun({
 		peers: options?.peers || options,

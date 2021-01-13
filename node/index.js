@@ -15,8 +15,7 @@ const https = require("https")
 const shuffle = require("array-shuffle")
 
 function gun_config(options) {
-	const bootstraps = options.bootstraps ||
-		["https://griffin-bootstrap-us.herokuapp.com/p2p"]
+	const bootstraps = options.bootstraps || []
 
 	const port = parseInt(options.port || process.env.PORT) || 8765
 
