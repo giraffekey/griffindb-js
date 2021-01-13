@@ -4,6 +4,7 @@
 	"main": "index.js",
 	"license": "BSD-3-Clause",
 	"dependencies": {
+		"array-shuffle": "^2.0.0",
 		"griffin-core": "^0.1.1",
 		"gun": "github:amark/gun"
 	}

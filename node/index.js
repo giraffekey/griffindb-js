@@ -15,9 +15,10 @@ const https = require("https")
 const shuffle = require("array-shuffle")
 
 function gun_config(options) {
-	const bootstraps = options.bootstraps || ["/ip4/138.68.253.237/tcp/41725/p2p/Qmd8yfj9kgb73ex2Dgg1tifBZrQeh2rHHvZSE1F9vgLUsk"]
+	const bootstraps = options.bootstraps ||
+		["https://griffin-bootstrap-us.herokuapp.com/p2p"]
 
-	const port = options.port || process.env.PORT || 8765
+	const port = parseInt(options.port || process.env.PORT) || 8765
 
 	let config = {
 		peers: options.peers,
@@ -45,7 +46,7 @@ function gun_config(options) {
 	return config
 }
 
-async function P2P(gun, bootstraps, port) {
+async function P2P(gun, bootstraps, port, server) {
 	let modules = {
     	transport: [TCP],
     	connEncryption: [NOISE],
@@ -74,6 +75,7 @@ async function P2P(gun, bootstraps, port) {
 	})
 
 	await node.start()
+	process.env.LIBP2P = node.peerId.toB58String()
 
 	node.multiaddrs.forEach(addr => {
 	  	console.log(`Listening on: ${addr.toString()}/p2p/${node.peerId.toB58String()}`)
@@ -81,15 +83,15 @@ async function P2P(gun, bootstraps, port) {
 
 	let peers = {}
 
-	const get_peers = () => shuffle(Object.values(peers)).slice(0, 5)
+	const gun_peers = () => shuffle(Object.values(peers)).slice(0, 5)
 
 	node.connectionManager.on("peer:connect", (conn) => {
 		const peer = conn.remotePeer.toB58String()
+		if (server) console.log(peer)
 		if (!peers[peer]?.includes("/p2p/")){
 			const [first, second] = conn.remoteAddr.protos().map(p => p.name)
 			const {address, port} = conn.remoteAddr.nodeAddress()
 			peers[peer] = `/${first}/${address}/${second}/${port - 1}/gun`
-			console.log(peers[peer])
 		}
 		gun.opt({ peers: gun_peers() })
 	})
@@ -98,6 +100,15 @@ async function P2P(gun, bootstraps, port) {
 		delete peers[conn.remotePeer.toB58String()]
 		gun.opt({ peers: gun_peers() })
 	})
+
+	if (server) {
+		const requestListener = (req, res) => {
+			res.setHeader("Content-Type", "application/json")
+			res.writeHead(200)
+    		res.end(JSON.stringify({ peers: gun_peers() }))
+		}
+		http.createServer(requestListener).listen(port + 1, "0.0.0.0")
+	}
 
 	const stop = async () => {
 		await node.stop()
@@ -116,7 +127,7 @@ async function Griffin(options) {
 	if (options.server) {
 		console.log("Griffin node started on port " + config.port)
 	}
-	await P2P(gun, config.bootstraps, config.port + 1)
+	await P2P(gun, config.bootstraps, config.port + 1, options.server)
 	return griffin.Griffin({
 		gun,
 		SEA: Gun.SEA,
@@ -129,7 +140,7 @@ Griffin.server = async (options) => {
 	const config = gun_config(options)
 	const gun = Gun(config)
 	console.log("Griffin node started on port " + config.port)
-	await P2P(gun, config.bootstraps, config.port + 1)
+	await P2P(gun, config.bootstraps, config.port + 1, true)
 }
 
 module.exports = Griffin
