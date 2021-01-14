@@ -135,6 +135,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/debug@^4.1.5":
+  version "4.1.5"
+  resolved "https://registry.yarnpkg.com/@types/debug/-/debug-4.1.5.tgz#b14efa8852b7768d898906613c23f688713e02cd"
+  integrity sha512-Q1y515GcOdTHgagaVFhHnIFQ38ygs/kmxdNpvpou+raI9UO3YZcHDngBSYKQklcKlvA7iuQlmIKbzvmxcOE9CQ==
+
 "@types/long@^4.0.1":
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/@types/long/-/long-4.0.1.tgz#459c65fa1867dafe6a8f322c4c51695663cc55e9"
@@ -168,6 +173,11 @@ abortable-iterator@^3.0.0:
   integrity sha512-7KqcPPnMhfot4GrEjK51zesS4Ye/lUCHBgYt3oRxIlU24HO3mVxBwEo9niNyfHqoWKqWLuZTc3zErNomdHA+ag==
   dependencies:
     get-iterator "^1.0.2"
+
+address@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/address/-/address-1.1.2.tgz#bf1116c9c758c51b7a933d296b72c221ed9428b6"
+  integrity sha512-aT6camzM4xEA54YVJYSqxz1kv4IHnQZRtThJJHhUMRExaU5spC7jX5ugSwTaTgJliIgs4VhZOk7htClvQ/LmRA==
 
 addressparser@^0.3.2:
   version "0.3.2"
@@ -467,6 +477,11 @@ delay@^4.3.0:
   resolved "https://registry.yarnpkg.com/delay/-/delay-4.4.0.tgz#71abc745f3ce043fe7f450491236541edec4ad0c"
   integrity sha512-txgOrJu3OdtOfTiEOT2e76dJVfG/1dz2NZ4F0Pyt4UGZJryssMRp5vdM5wQoLwSOBNdrJv3F9PAhp/heqd7vrA==
 
+denque@^1.4.1:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/denque/-/denque-1.5.0.tgz#773de0686ff2d8ec2ff92914316a47b73b1c73de"
+  integrity sha512-CYiCSgIF1p6EUByQPlGkKnP1M9g0ZV3qMIrqMqZqdwazygIA/YP2vrbcyl1h/WppKJTdl1F85cXIle+394iDAQ==
+
 detect-node@^2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/detect-node/-/detect-node-2.0.4.tgz#014ee8f8f669c5c58023da64b8179c083a28c46c"
@@ -698,16 +713,18 @@ griffin-core@^0.1.2:
     promise.map "^0.3.1"
     uuid "^8.3.2"
 
-griffin-nodejs@0.1.12:
-  version "0.1.12"
-  resolved "https://registry.yarnpkg.com/griffin-nodejs/-/griffin-nodejs-0.1.12.tgz#be3ba16c4d65c4a09e1a7f706038489d00197e3d"
-  integrity sha512-ugR2A+ZauUgB1zI2wcuE0r2X/C8vUYqRL3NEnA9wino0AhKJHJ7UACXQ35VxRP+TKCTyUi2ACCV1TPYDD1wqBQ==
+griffin-nodejs@0.1.15:
+  version "0.1.15"
+  resolved "https://registry.yarnpkg.com/griffin-nodejs/-/griffin-nodejs-0.1.15.tgz#e581ccd8d2c6204005f0bcdd2411915ba3457bc3"
+  integrity sha512-VAwUVaU3HY6qGrI1gLkzati23KYuoHfpSFZ8NDOunV4R7q+J3RdMdbvtkmdyFGJSGoHLn1Wvt9k7D+j2blTOEw==
   dependencies:
+    address "^1.1.2"
     array-shuffle "^2.0.0"
     griffin-core "^0.1.2"
     gun "github:amark/gun"
     libp2p "^0.30.0"
     libp2p-bootstrap "^0.12.1"
+    libp2p-gossipsub "^0.8.0"
     libp2p-mdns "^0.15.0"
     libp2p-mplex "^0.10.1"
     libp2p-noise "^2.0.1"
@@ -1193,7 +1210,23 @@ libp2p-crypto@^0.18.0:
     uint8arrays "^1.1.0"
     ursa-optional "^0.10.1"
 
-libp2p-interfaces@^0.8.1:
+libp2p-gossipsub@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/libp2p-gossipsub/-/libp2p-gossipsub-0.8.0.tgz#b9c961560dc02afa079790f44882854a19a94abf"
+  integrity sha512-nR5XGN6E5n2ukPR9aa/rtegwluxiK+vT9j5Oulp+P1h6T9vEqDvFAEe9cqA3FiT7apI5gk44SE0aZFTMpxz6EA==
+  dependencies:
+    "@types/debug" "^4.1.5"
+    debug "^4.1.1"
+    denque "^1.4.1"
+    err-code "^2.0.0"
+    it-pipe "^1.0.1"
+    libp2p-interfaces "^0.8.0"
+    peer-id "^0.14.0"
+    protons "^2.0.0"
+    time-cache "^0.3.0"
+    uint8arrays "^1.1.0"
+
+libp2p-interfaces@^0.8.0, libp2p-interfaces@^0.8.1:
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/libp2p-interfaces/-/libp2p-interfaces-0.8.1.tgz#426c0d599f169aa7a599d7707e7b82cec1baba40"
   integrity sha512-46ttBnPMmg3/I8hPQE08uJtmI6CB2O/+xnOqYJ+yW8m1mqpMNJvQd/yTkoMyNXxJnGhAzC1Vn7IxVrisQhOmNA==
@@ -1395,6 +1428,11 @@ lodash.repeat@4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/lodash.repeat/-/lodash.repeat-4.1.0.tgz#fc7de8131d8c8ac07e4b49f74ffe829d1f2bec44"
   integrity sha1-/H3oEx2MisB+S0n3T/6CnR8r7EQ=
+
+lodash.throttle@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
+  integrity sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=
 
 long@^4.0.0:
   version "4.0.0"
@@ -1997,6 +2035,13 @@ thunky@^1.0.2:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/thunky/-/thunky-1.1.0.tgz#5abaf714a9405db0504732bbccd2cedd9ef9537d"
   integrity sha512-eHY7nBftgThBqOyHGVN+l8gF0BucP09fMo0oO/Lb0w1OF80dJv+lDVpXG60WMQvkcxAkNybKsrEIE3ZtKGmPrA==
+
+time-cache@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/time-cache/-/time-cache-0.3.0.tgz#ed0dfcf0fda45cdc95fbd601fda830ebf1bd5d8b"
+  integrity sha1-7Q388P2kXNyV+9YB/agw6/G9XYs=
+  dependencies:
+    lodash.throttle "^4.1.1"
 
 timeout-abort-controller@^1.1.1:
   version "1.1.1"

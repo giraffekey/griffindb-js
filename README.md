@@ -55,6 +55,7 @@ Griffin.server({
 	    secret: "",
 	    bucket: "",
 	},
+	// api: false, This is needed on Heroku
 })
 ```
 

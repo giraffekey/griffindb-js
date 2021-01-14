@@ -7,14 +7,17 @@ const { NOISE } = require("libp2p-noise")
 const MPLEX = require("libp2p-mplex")
 const Bootstrap = require("libp2p-bootstrap")
 const MulticastDNS = require("libp2p-mdns")
+const Gossipsub = require('libp2p-gossipsub')
 const multiaddr = require("multiaddr")
 const cluster = require("cluster")
 const fs = require("fs")
 const http = require("http")
 const https = require("https")
+const dns = require("dns")
 const shuffle = require("array-shuffle")
+const address = require("address")
 
-function gun_config(options) {
+async function gun_config(options) {
 	const bootstraps = options.bootstraps || ["http://159.203.81.101"]
 
 	const port = parseInt(options.port || process.env.PORT) || 8765
@@ -29,30 +32,49 @@ function gun_config(options) {
 		port,
 	}
 
-	if (options.server) {
-		let server
-		if(options.https){
-			const config = {
-				key: fs.readFileSync(https.key),
-				cert: fs.readFileSync(https.cert),
-			}
-			server = https.createServer(config, Gun.serve(__dirname))
-		} else {
-			server = http.createServer(Gun.serve(__dirname))
-		}
+	config.hostname = address.ip()
 
-		config.gun.web = server.listen(port + 1)
+	await new Promise((res) => {
+		dns.lookupService(config.hostname, 443, (err, hostname) => {
+			if (!err && hostname.startsWith("https://")) {
+				config.hostname = hostname
+				res()
+			} else {
+				dns.lookupService(config.hostname, 80, (err, hostname) => {
+					if (!err && hostname.startsWith("http://")) {
+						config.hostname = hostname
+					}
+					res()
+				})
+			}
+		})
+	})
+
+	config.hostname = config.hostname + "/gun"
+
+	let server
+	if(options.https){
+		const config = {
+			key: fs.readFileSync(https.key),
+			cert: fs.readFileSync(https.cert),
+		}
+		server = https.createServer(config, Gun.serve(__dirname))
+	} else {
+		server = http.createServer(Gun.serve(__dirname))
 	}
+
+	config.gun.web = server.listen(options.api ? port + 1 : port)
 
 	return config
 }
 
-async function P2P(gun, bootstraps, port, server) {
+async function P2P(gun, bootstraps, hostname, port, api) {
 	let modules = {
     	transport: [TCP],
     	connEncryption: [NOISE],
     	streamMuxer: [MPLEX],
     	peerDiscovery: [MulticastDNS],
+    	pubsub: Gossipsub,
   	}
   	let config = {}
 
@@ -99,31 +121,44 @@ async function P2P(gun, bootstraps, port, server) {
 	})
 
 	await node.start()
+	const peerId = node.peerId.toB58String()
 
 	node.multiaddrs.forEach(addr => {
-	  	console.log(`Listening on: ${addr.toString()}/p2p/${node.peerId.toB58String()}`)
+	  	console.log(`Listening on: ${addr.toString()}/p2p/${peerId}`)
 	})
 
 	let peers = {}
+	let republish = {}
 
 	const gun_peers = () => shuffle(Object.values(peers)).slice(0, 5)
 
 	node.connectionManager.on("peer:connect", (conn) => {
 		const peer = conn.remotePeer.toB58String()
-		if (server) console.log(peer)
-		if (!peers[peer]?.includes("/p2p/")){
-			const { address } = conn.remoteAddr.nodeAddress()
-			peers[peer] = `http://${address}/gun`
-		}
-		gun.opt({ peers: gun_peers() })
+		if (!peers[peer]) republish[peer] = true
+
+		node.pubsub.on(peer, msg => {
+			peers[peer] = msg.data.toString()
+			republish[peer] = false
+			gun.opt({ peers: gun_peers() })
+		})
+		node.pubsub.subscribe(peer)
+
+		setTimeout(() => {
+			if (republish[peer]) {
+				node.pubsub.publish(peerId, hostname)
+				setTimeout(() => (republish[peer] = true), 10 * 60 * 1000)
+			}
+		}, 1000)
 	})
 
 	node.connectionManager.on("peer:disconnect", (conn) => {
-		delete peers[conn.remotePeer.toB58String()]
+		const peer = conn.remotePeer.toB58String()
+		delete peers[peer]
+		republish[peer] = true
 		gun.opt({ peers: gun_peers() })
 	})
 
-	if (server) {
+	if (api) {
 		const proxyPass = (req, res, options) => {
 			let data = ""
 
@@ -142,6 +177,7 @@ async function P2P(gun, bootstraps, port, server) {
 					res2.on("end", () => res.end(data))
 				})
 				if (data) req2.write(data)
+				req2.on("error", console.error)
 				req2.end()
 			})
 		}
@@ -163,7 +199,7 @@ async function P2P(gun, bootstraps, port, server) {
 						break
 					}
 				}
-				addr += "/p2p/" + node.peerId.toB58String()
+				addr += "/p2p/" + peerId
 				res.end(addr)
 			} else if (req.url === "/api") {
 				res.setHeader("Content-Type", "application/json")
@@ -188,10 +224,10 @@ async function P2P(gun, bootstraps, port, server) {
 
 async function Griffin(options) {
 	options = options || {}
-	options.server = options.server === true || options.server === undefined
-	const config = gun_config(options)
+	options.api = options.api === true || options.api === undefined
+	const config = await gun_config(options)
 	const gun = Gun(config.gun)
-	await P2P(gun, config.bootstraps, config.port, options.server)
+	await P2P(gun, config.bootstraps, config.hostname, config.port, options.api)
 	return griffin.Griffin({
 		gun,
 		SEA: Gun.SEA,
@@ -201,9 +237,10 @@ async function Griffin(options) {
 
 Griffin.server = async (options) => {
 	options = options || {}
-	const config = gun_config(options)
+	options.api = options.api === true || options.api === undefined
+	const config = await gun_config(options)
 	const gun = Gun(config.gun)
-	await P2P(gun, config.bootstraps, config.port, true)
+	await P2P(gun, config.bootstraps, config.hostname, config.port, options.api)
 }
 
 module.exports = Griffin
