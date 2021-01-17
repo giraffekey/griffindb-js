@@ -5,7 +5,7 @@ require("gun/lib/webrtc")
 const shuffle = require("array-shuffle")
 
 function Griffin(options) {
-	const bootstraps = options?.bootstraps || ["http://159.203.81.101"]
+	const bootstraps = options?.bootstraps || []
 
 	const gun = Gun({
 		peers: options?.peers || options,

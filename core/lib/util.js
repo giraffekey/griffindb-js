@@ -153,8 +153,21 @@ function matches(doc, query) {
 	return true
 }
 
+function index_from_sort(sort) {
+	let sorted = {}
+	const entries = Object.entries(sort).sort(([a], [b]) => a.localeCompare(b))
+
+	for (let i = 0; i < entries.length; i++) {
+		const [key, value] = entries[i]
+		sorted[key] = value
+	}
+
+	return JSON.stringify(sorted).replace(/\s/g, "")
+}
+
 module.exports = {
 	clean,
 	unclean,
 	matches,
+	index_from_sort,
 }

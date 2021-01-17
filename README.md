@@ -40,25 +40,6 @@ await dogs.update({ age: 5 }, { $inc: { age: 1 } }).one()
 await dogs.replace({ name: "Gordon" }, { name: "Gordon Ramsey", color: "blonde", age: 54, owners: null })
 ```
 
-## Contributing to the network
-
-Griffin relays operate over a libp2p network to enable relay switching and limited single point of failure. Your relay will be used by random members of the entire Griffin network.
-
-They are very simple to setup. S3 backed storage relays are a big plus.
-
-```js
-const Griffin = require("griffin-nodejs")
-
-Griffin.server({
-	s3: {
-		key: "",
-	    secret: "",
-	    bucket: "",
-	},
-	// api: false, This is needed on Heroku
-})
-```
-
 ## Donations
 
 Feel free to donate! I plan on implementing the entire MongoDB API, a file storage API based on Sia/Skynet and other features involving shared data.
