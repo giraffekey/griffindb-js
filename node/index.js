@@ -1,4 +1,4 @@
-const griffin = require("../core")
+const griffin = require("griffin-core")
 const Gun = require("gun")
 require("gun/sea")
 const Libp2p = require("libp2p")
