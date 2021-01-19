@@ -11,6 +11,7 @@
 		"libp2p": "^0.30.0",
 		"libp2p-bootstrap": "^0.12.1",
 		"libp2p-gossipsub": "^0.8.0",
+		"libp2p-kad-dht": "^0.20.4",
 		"libp2p-mdns": "^0.15.0",
 		"libp2p-mplex": "^0.10.1",
 		"libp2p-noise": "^2.0.1",
