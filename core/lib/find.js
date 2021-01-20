@@ -2,7 +2,7 @@ const pmap = require("promise.map")
 const deepEqual = require("deep-equal")
 const { unclean, matches, index_from_sort } = require("./util")
 
-function find(SEA, col, indices, key, query, options) {
+function find(SEA, col, indices, key, retrieve, query, options) {
 	return new Promise(async (res, rej) => {
 		let docs = []
 		let promises = []
@@ -20,8 +20,16 @@ function find(SEA, col, indices, key, query, options) {
 					res()
 				} else {
 					col.once(d => {
-						data = d
-						res()
+						if (d !== undefined) {
+							data = d
+							res()
+						} else {
+							const key = d._["#"]
+							retrieve(key, d => {
+								data = d
+								res()
+							})
+						}
 					})
 				}
 			})
@@ -32,6 +40,7 @@ function find(SEA, col, indices, key, query, options) {
 		const skip = sort ? 0 : options.skip
 
 		if (data) {
+			const col_key = data._["#"]
 			delete data._
 			const entries = Object.entries(data)
 
@@ -41,6 +50,14 @@ function find(SEA, col, indices, key, query, options) {
 				}
 
 				let [id, doc] = entries[i]
+
+				if (doc === undefined) {
+					const doc = await new Promise((res) => {
+						const key = `${col_key}/${id}`
+						retrieve(key, res)
+					})
+				}
+
 				if (doc) {
 					try {
 						doc = await SEA.decrypt(doc, key)
@@ -124,30 +141,30 @@ function find(SEA, col, indices, key, query, options) {
  *   limit - Maximum amount of documents to return
  *   fields - Fields to include/exclude
  */
-function Find(SEA, col, indices, key, query, options) {
+function Find(SEA, col, indices, key, retrieve, query, options) {
 	function sort(sort) {
-		return Find(SEA, col, indices, key, query, {
+		return Find(SEA, col, indices, key, retrieve, query, {
 			...options,
 			sort,
 		})
 	}
 
 	function skip(skip) {
-		return Find(SEA, col, indices, key, query, {
+		return Find(SEA, col, indices, key, retrieve, query, {
 			...options,
 			skip,
 		})
 	}
 
 	function limit(limit) {
-		return Find(SEA, col, indices, key, query, {
+		return Find(SEA, col, indices, key, retrieve, query, {
 			...options,
 			limit,
 		})
 	}
 
 	function fields(fields) {
-		return Find(SEA, col, indices, key, query, {
+		return Find(SEA, col, indices, key, retrieve, query, {
 			...options,
 			fields,
 		})
@@ -156,12 +173,12 @@ function Find(SEA, col, indices, key, query, options) {
 	function one() {
 		options.one = true
 		options.limit = 1
-		return find(SEA, col, indices, key, query, options)
+		return find(SEA, col, indices, key, retrieve, query, options)
 	}
 
 	function many() {
 		options.one = false
-		return find(SEA, col, indices, key, query, options)
+		return find(SEA, col, indices, key, retrieve, query, options)
 	}
 
 	return {

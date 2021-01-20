@@ -719,10 +719,10 @@ graceful-fs@^4.1.6, graceful-fs@^4.2.0:
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.4.tgz#2256bde14d3632958c465ebc96dc467ca07a29fb"
   integrity sha512-WjKPNJF79dtJAVniUlGGWHYGz2jWxT6VhN/4m1NdkbZ2nOsEF+cI1Edgql5zCRhs/VsQYRvrXctxktVXZUkixw==
 
-griffin-core@^0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/griffin-core/-/griffin-core-0.1.3.tgz#c1ce0471f63bd93245448623ed8bae9cc9756635"
-  integrity sha512-Iz2F7rpKUDQxSNCJfm3nnE1MlL6QcGFIv6qoXTriDR6dJ/lJ6HYWTEXgo8PshUK0grYmtwdOS6/HXFoyzjv2jg==
+griffin-core@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/griffin-core/-/griffin-core-0.1.4.tgz#a5accb4ea94d216da611d98520df4a06d761bd8b"
+  integrity sha512-IYsQ5JH9DK+UCKbxotSVMkIUY6lSH/hwQavGjo+B9CpjOWNYy6K9n23M25l/4aFtaSMswEMqWC13YRamkTROcg==
   dependencies:
     bip39 "^3.0.3"
     deep-equal "^2.0.5"

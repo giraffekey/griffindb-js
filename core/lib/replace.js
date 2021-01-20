@@ -1,7 +1,7 @@
 const { v4: uuidv4 } = require("uuid")
 const { clean, unclean, matches } = require("./util")
 
-function replace(SEA, col, key, query, replacement, options) {
+function replace(SEA, col, key, backup, query, replacement, options) {
 	return new Promise((res, rej) => {
 		if (Object.prototype.toString.call(replacement) !== "[object Object]") {
 			rej(`Replacement document must be an object`)
@@ -34,6 +34,11 @@ function replace(SEA, col, key, query, replacement, options) {
 											console.error(`Failed to insert document ${i}`)
 										} else {
 											ret_id = id
+											col.once(d => {
+												const key = `${d._["#"]}/${id}`
+												const data = doc
+												backup(key, data)
+											})
 											res()
 										}
 									})
@@ -57,11 +62,21 @@ function replace(SEA, col, key, query, replacement, options) {
 								console.error(`Failed to insert document ${i}`)
 							} else {
 								ret_id = id
+								col.once(d => {
+									const key = `${d._["#"]}/${id}`
+									const data = doc
+									backup(key, data)
+								})
 								res()
 							}
 						})
 					})
 				}
+
+				col.once(d => {
+					const key = d._["#"]
+					backup(key, d)
+				})
 
 				res(ret_id)
 			} else {
@@ -76,16 +91,16 @@ function replace(SEA, col, key, query, replacement, options) {
  * Options:
  *   upsert - Create a document if no documents match
  */
-function Replace(SEA, col, key, query, replacement, options) {
+function Replace(SEA, col, key, backup, query, replacement, options) {
 	function upsert(upsert) {
-		return Replace(SEA, col, key, query, replacement, {
+		return Replace(SEA, col, key, backup, query, replacement, {
 			...options,
 			upsert,
 		})
 	}
 
 	function one() {
-		return replace(SEA, col, key, query, replacement, options)
+		return replace(SEA, col, key, backup, query, replacement, options)
 	}
 
 	return {

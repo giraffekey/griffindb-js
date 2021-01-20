@@ -4,7 +4,7 @@ const Collection = require("./collection")
 /*
  * The application"s database, stored under a namespace
  */
-function Namespace(SEA, user, name) {
+function Namespace(SEA, user, name, backup, retrieve) {
 	const db = user.get("@" + name)
 	let key = user._.sea
 
@@ -47,7 +47,7 @@ function Namespace(SEA, user, name) {
 				if (is_key && key === user._.sea) {
 					rej("Namespace requires user generated key")
 				} else {
-					res(Collection(SEA, db, name, key))
+					res(Collection(SEA, db, name, key, backup, retrieve))
 				}
 			})
 		})
@@ -61,10 +61,10 @@ function Namespace(SEA, user, name) {
 }
 
 function Griffin(options) {
-	let { gun, SEA, skynet } = options
+	let { gun, SEA, skynet, backup, retrieve } = options
 	let user = null
 
-	function create(username, password, options, unique) {
+	function create(username, password, user_options, unique) {
 		return new Promise((res, rej) => {
 			const created_user = gun.user().create(username, password, ack => {
 				if (ack.err) {
@@ -75,7 +75,7 @@ function Griffin(options) {
 							rej("User already created!")
 						} else {
 							created_user.get("griffin").get("options").put({
-								skynet: options?.skynet || "https://siasky.net",
+								skynet: (user_options && user_options.skynet) || options.skynet,
 							})
 							res(ack.pub)
 						}
@@ -95,6 +95,14 @@ function Griffin(options) {
 					const fn = options => {
 						if (options) {
 							skynet = options.skynet
+							let opt = {}
+							if (options.skynet && options.skynet.secret) {
+								opt.secret = options.skynet.secret
+							}
+							if (options.skynet && options.skynet.portal) {
+								opt.portal = options.skynet.portal
+							}
+							gun.opt(opt)
 						}
 					}
 					user.get("griffin").get("options").once(fn)
@@ -149,7 +157,7 @@ function Griffin(options) {
 		if (user === null) {
 			throw new Error("User is not logged in")
 		}
-		return Namespace(SEA, user, name)
+		return Namespace(SEA, user, name, backup, retrieve)
 	}
 
 	return {

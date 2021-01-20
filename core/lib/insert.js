@@ -2,7 +2,7 @@ const { v4: uuidv4 } = require("uuid")
 const pmap = require("promise.map")
 const { clean } = require("./util")
 
-function insert(SEA, col, key, docs, options) {
+function insert(SEA, col, key, backup, docs, options) {
 	return new Promise(async (res, rej) => {
 		if (options.one) docs = [docs]
 		else if (!Array.isArray(docs)) {
@@ -50,6 +50,11 @@ function insert(SEA, col, key, docs, options) {
 								rej(`Failed to insert document ${i}`)
 							} else {
 								ids.push(id)
+								col.once(d => {
+									const key = `${d._["#"]}/${id}`
+									const data = doc
+									backup(key, data)
+								})
 								res()
 							}
 						})
@@ -65,6 +70,11 @@ function insert(SEA, col, key, docs, options) {
 							console.error(`Failed to insert document ${i}`)
 						} else {
 							ids.push(id)
+							col.once(d => {
+								const key = `${d._["#"]}/${id}`
+								const data = doc
+								backup(key, data)
+							})
 							res()
 						}
 					})
@@ -73,6 +83,11 @@ function insert(SEA, col, key, docs, options) {
 		}
 
 		if (!ordered) await pmap(promises, p => p, 30)
+
+		col.once(d => {
+			const key = d._["#"]
+			backup(key, d)
+		})
 
 		res(ids)
 	})
@@ -83,10 +98,10 @@ function insert(SEA, col, key, docs, options) {
  * Options:
  *   ordered - Prevent inserting remaining documents if one insert fails
  */
-function Insert(SEA, col, key, docs, options) {
+function Insert(SEA, col, key, backup, docs, options) {
 	function ordered(ordered) {
 		if (ordered === undefined) ordered = true
-		return Insert(SEA, col, key, docs, {
+		return Insert(SEA, col, key, backup, docs, {
 			...options,
 			ordered,
 		})
@@ -94,12 +109,12 @@ function Insert(SEA, col, key, docs, options) {
 
 	function one() {
 		options.one = true
-		return insert(SEA, col, key, docs, options)
+		return insert(SEA, col, key, backup, docs, options)
 	}
 
 	function many() {
 		options.one = false
-		return insert(SEA, col, key, docs, options)
+		return insert(SEA, col, key, backup, docs, options)
 	}
 
 	return {

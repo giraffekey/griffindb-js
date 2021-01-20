@@ -4,6 +4,12 @@ A peer-to-peer document-oriented database. Take back ownership over your data!
 
 Griffin is a decentralized database powered by [GUN](https://github.com/amark/gun) that implements an API and query language similar to MongoDB. All data stored is automatically encrypted and distributed over a peer-to-peer network and can optionally be shared with others. It is a truly powerful database solution.
 
+You have zero chance of ever losing your data. You start out with localStorage. When localStorage fails, you can attempt to pull data from the WebRTC network or the storage relay you last used. When the relay goes down or the browsers storing your data go offline, you can pull data from Sia SkynetDB as the browser version uses [Zenbase](https://github.com/Fluffy9/Zenbase). And if all else fails, you can pull data from other relays in the network as a Kademlia DHT that all Griffin relays have access to is used to back everything up as well.
+
+Seems overkill? That's because it is. But it is extremely important that users NEVER lose ANY of their data EVER. Griffin empowers developers with limited resources with a never failing backup plan so that even people living in their mother's basement can create production ready decentralized applications without headache.
+
+Notice: The data sharing API has not been started and the database is not thoroughly tested. Collaborative applications are probably currently better off using GUN itself and there is no guarantee that the database is production ready.
+
 ## Usage
 
 `yarn add griffin-browser` or `yarn add griffin-nodejs`
@@ -11,10 +17,15 @@ Griffin is a decentralized database powered by [GUN](https://github.com/amark/gu
 ```js
 import Griffin from "griffin-browser"
 
-const griffin = Griffin()
+const griffin = Griffin({
+	skynet: {
+		secret: "MY_SECRET",
+		portal: "https://siasky.net",
+	},
+})
 
 await griffin.create("username", "password", {
-	skynet: ..., // which skynet portal the user wants to use
+	skynet: ..., // the user's personal skynet secret & portal
 }, false) // false means you do not require unique usernames
 
 await griffin.auth("username", "password")
@@ -38,6 +49,22 @@ console.log(await dogs.find({ age: { $lt: 7, $gte: 3 } }).limit(10).many())
 
 await dogs.update({ age: 5 }, { $inc: { age: 1 } }).one()
 await dogs.replace({ name: "Gordon" }, { name: "Gordon Ramsey", color: "blonde", age: 54, owners: null })
+```
+
+## Contributing to the network
+
+Adding new relays to the network is incredibly helpful. In addition to being used for WebRTC connections, Griffin relays will also automatically connect to a peer-to-peer network and be used regularly for additional backup. Relays with S3 based storage enabled are especially helpful.
+
+```js
+import Griffin from "griffin-browser"
+
+Griffin.server({
+	s3: {
+		key: "",
+    	secret: "",
+    	bucket: "",
+	},
+})
 ```
 
 ## Donations

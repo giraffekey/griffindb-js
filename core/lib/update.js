@@ -70,7 +70,7 @@ function change(doc, updateDoc) {
 	return doc
 }
 
-function update(SEA, col, key, query, updateDoc, options) {
+function update(SEA, col, key, backup, query, updateDoc, options) {
 	return new Promise((res, rej) => {
 		let ids = []
 		let promises = []
@@ -103,6 +103,11 @@ function update(SEA, col, key, query, updateDoc, options) {
 											console.error(`Failed to delete document ${i}`)
 										} else {
 											ids.push(id)
+											col.once(d => {
+												const key = `${d._["#"]}/${id}`
+												const data = doc
+												backup(key, data)
+											})
 											res()
 										}
 									})
@@ -131,6 +136,11 @@ function update(SEA, col, key, query, updateDoc, options) {
 
 				await pmap(promises, p => p, 30)
 
+				col.once(d => {
+					const key = d._["#"]
+					backup(key, d)
+				})
+
 				res(ids)
 			} else {
 				rej("Collection was not found")
@@ -145,16 +155,16 @@ function update(SEA, col, key, query, updateDoc, options) {
  *   limit - Maximum amount of documents to delete
  *   upsert - Create a document if no documents match
  */
-function Update(SEA, col, key, query, updateDoc, options) {
+function Update(SEA, col, key, backup, query, updateDoc, options) {
 	function limit(limit) {
-		return Update(SEA, col, key, query, updateDoc, {
+		return Update(SEA, col, key, backup, query, updateDoc, {
 			...options,
 			limit,
 		})
 	}
 
 	function upsert(upsert) {
-		return Update(SEA, col, key, query, updateDoc, {
+		return Update(SEA, col, key, backup, query, updateDoc, {
 			...options,
 			upsert,
 		})
@@ -163,12 +173,12 @@ function Update(SEA, col, key, query, updateDoc, options) {
 	function one() {
 		options.one = true
 		options.limit = 1
-		return update(SEA, col, key, query, updateDoc, options)
+		return update(SEA, col, key, backup, query, updateDoc, options)
 	}
 
 	function many() {
 		options.one = false
-		return update(SEA, col, key, query, updateDoc, options)
+		return update(SEA, col, key, backup, query, updateDoc, options)
 	}
 
 	return {

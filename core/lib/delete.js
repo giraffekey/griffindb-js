@@ -1,7 +1,7 @@
 const pmap = require("promise.map")
 const { unclean, matches } = require("./util")
 
-function delete_(SEA, col, key, query, options) {
+function delete_(SEA, col, key, backup, query, options) {
 	return new Promise((res, rej) => {
 		let ids = []
 		let promises = []
@@ -31,6 +31,11 @@ function delete_(SEA, col, key, query, options) {
 											console.error(`Failed to delete document ${i}`)
 										} else {
 											ids.push(id)
+											col.once(d => {
+												const key = `${d._["#"]}/${id}`
+												const data = null
+												backup(key, data)
+											})
 											res()
 										}
 									})
@@ -45,6 +50,11 @@ function delete_(SEA, col, key, query, options) {
 
 				await pmap(promises, p => p, 30)
 
+				col.once(d => {
+					const key = d._["#"]
+					backup(key, d)
+				})
+
 				res(ids)
 			} else {
 				rej("Collection was not found")
@@ -58,9 +68,9 @@ function delete_(SEA, col, key, query, options) {
  * Options:
  *   limit - Maximum amount of documents to delete
  */
-function Delete(SEA, col, key, query, options) {
+function Delete(SEA, col, key, backup, query, options) {
 	function limit(limit) {
-		return Delete(SEA, col, key, query, {
+		return Delete(SEA, col, key, backup, query, {
 			...options,
 			limit,
 		})
@@ -68,11 +78,11 @@ function Delete(SEA, col, key, query, options) {
 
 	function one() {
 		options.limit = 1
-		return delete_(SEA, col, key, query, options)
+		return delete_(SEA, col, key, backup, query, options)
 	}
 
 	function many() {
-		return delete_(SEA, col, key, query, options)
+		return delete_(SEA, col, key, backup, query, options)
 	}
 
 	return {

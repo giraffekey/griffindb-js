@@ -8,7 +8,7 @@ const { clean, index_from_sort } = require("./util")
 /*
  * A document collection with a standardized schema
  */
-function Collection(SEA, db, name, key) {
+function Collection(SEA, db, name, key, backup, retrieve) {
 	const col = db.get("$" + name)
 	const indices = db.get("_indices").get(name)
 
@@ -19,14 +19,14 @@ function Collection(SEA, db, name, key) {
 		options.skip = options.skip || 0
 		options.limit = options.limit || 0
 		options.fields = options.fields || {}
-		return Find(SEA, col, indices, key, query, options)
+		return Find(SEA, col, indices, key, retrieve, query, options)
 	}
 
 	function insert(docs, options) {
 		docs = docs || {}
 		options = options || {}
 		options.ordered = options.ordered || false
-		return Insert(SEA, col, key, docs, options)
+		return Insert(SEA, col, key, backup, docs, options)
 	}
 
 	function update(query, updateDoc, options) {
@@ -34,21 +34,21 @@ function Collection(SEA, db, name, key) {
 		options = options || {}
 		options.limit = options.limit || 0
 		options.upset = options.upset || false
-		return Update(SEA, col, key, query, updateDoc, options)
+		return Update(SEA, col, key, backup, query, updateDoc, options)
 	}
 
 	function replace(query, replacement, options) {
 		query = query || {}
 		options = options || {}
 		options.upset = options.upset || false
-		return Replace(SEA, col, key, query, replacement, options)
+		return Replace(SEA, col, key, backup, query, replacement, options)
 	}
 
 	function delete_(query, options) {
 		query = query || {}
 		options = options || {}
 		options.limit = options.limit || 0
-		return Delete(SEA, col, key, query, options)
+		return Delete(SEA, col, key, backup, query, options)
 	}
 
 	async function createIndex(sort) {
@@ -92,7 +92,16 @@ function Collection(SEA, db, name, key) {
 	}
 
 	function drop() {
-		col.put(null)
+		col.once(d => {
+			if (d) {
+				col.put(null, ack => {
+					if (!ack.err) {
+						const key = d._["#"]
+						backup(key, null)
+					}
+				})
+			}
+		})
 	}
 
 	return {

@@ -2,14 +2,20 @@ const griffin = require("griffin-core")
 const Gun = require("gun/gun")
 require("gun/sea")
 require("gun/lib/webrtc")
+require("zenbase")
 const shuffle = require("array-shuffle")
 
 function Griffin(options) {
 	options = options || {}
 	const bootstraps = options.bootstraps || []
+	options.skynet = {
+		secret: (options.skynet && options.skynet.secret) || "secret",
+    	portal: (options.skynet && options.skynet.portal) || "https://siasky.net",
+	}
 
 	const gun = Gun({
 		peers: options.peers || options,
+		...options.skynet,
 	})
 
 	let peers = new Set(localStorage.getItem("peers") || [])
@@ -38,7 +44,7 @@ function Griffin(options) {
 		const amount = Math.min(options.backup || 2, peers.length)
 		const body = {
 			key,
-			value: data,
+			value: JSON.stringify(data),
 		}
 
 		let retry = amount
@@ -72,11 +78,11 @@ function Griffin(options) {
 
 			fetch(url)
 				.then(data => {
-					on(data)
+					on(JSON.parse(data))
 				})
 				.catch(() => {
 					retry += 1
-					if (retry < peers.length) send(peers[retry])
+					if (retry < peers.length && retry < 10) send(peers[retry])
 				})
 		}
 
@@ -86,7 +92,7 @@ function Griffin(options) {
 	return griffin.Griffin({
 		gun,
 		SEA: Gun.SEA,
-		skynet: options.skynet || "https://siasky.net",
+		skynet: options.skynet,
 		backup,
 		retrieve,
 	})
