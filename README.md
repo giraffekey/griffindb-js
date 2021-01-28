@@ -8,7 +8,7 @@ You have zero chance of ever losing your data. You start out with localStorage. 
 
 Seems overkill? That's because it is. But it is extremely important that users NEVER lose ANY of their data EVER. Griffin empowers developers with limited resources with a never failing backup plan so that even people living in their mother's basement can create production ready decentralized applications without headache.
 
-Notice: The data sharing API has not been started and the database is not thoroughly tested. Collaborative applications are probably currently better off using GUN itself and there is no guarantee that the database is production ready.
+Notice: Much of what is promised has not been implemented or tested. This project is in an experimental state and primarily intended for personal use cases right now. After experimenting with real world apps and use cases I will make the project more unopinionated and open to the public.
 
 ## Usage
 
