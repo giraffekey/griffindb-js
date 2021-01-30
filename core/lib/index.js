@@ -70,16 +70,24 @@ function Griffin(options) {
 				if (ack.err) {
 					rej(ack.err)
 				} else {
-					gun.get(`~@${username}`).once(data => {
-						if (unique && data) {
-							rej("User already created!")
-						} else {
-							created_user.get("griffin").get("options").put({
-								skynet: (user_options && user_options.skynet) || options.skynet,
-							})
-							res(ack.pub)
-						}
-					})
+					const resolve = () => {
+						created_user.get("griffin").get("options").put({
+							skynet: (user_options && user_options.skynet) || options.skynet,
+						})
+						res(ack.pub)
+					}
+					
+					if (unique) {
+						gun.get(`~@${username}`).once(data => {
+							if (data) {
+								rej("User already created!")
+							} else {
+								resolve()
+							}
+						})
+					} else {
+						resolve()
+					}
 				}
 			})
 		})

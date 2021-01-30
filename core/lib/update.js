@@ -67,6 +67,15 @@ function change(doc, updateDoc) {
 		}
 	}
 
+	if (updateDoc.$push) {
+		const entries = Object.entries(updateDoc.$unset)
+
+		for (let i = 0; i < entries.length; i++) {
+			const [key, value] = entries[i]
+			doc[key].push(value)
+		}
+	}
+
 	return doc
 }
 

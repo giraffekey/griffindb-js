@@ -2,7 +2,7 @@ const griffin = require("griffin-core")
 const Gun = require("gun/gun")
 require("gun/sea")
 require("gun/lib/webrtc")
-require("zenbase")
+require("zenbase/dist/main.js")
 const shuffle = require("array-shuffle")
 
 function Griffin(options) {
@@ -83,10 +83,12 @@ function Griffin(options) {
 				.catch(() => {
 					retry += 1
 					if (retry < peers.length && retry < 10) send(peers[retry])
+					else on(undefined)
 				})
 		}
 
 		if (peers.length > 0) send(peers[0])
+		else on(undefined)
 	}
 
 	return griffin.Griffin({

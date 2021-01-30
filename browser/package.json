@@ -1,11 +1,11 @@
 {
 	"name": "griffin-browser",
-	"version": "0.1.4",
+	"version": "0.1.6",
 	"main": "index.js",
 	"license": "MIT",
 	"dependencies": {
 		"array-shuffle": "^2.0.0",
-		"griffin-core": "^0.1.4",
+		"griffin-core": "0.1.5",
 		"gun": "github:amark/gun",
 		"zenbase": "^1.0.10"
 	}
