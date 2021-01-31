@@ -1,0 +1,12 @@
+{
+  "name": "griffindb",
+  "version": "0.1.0",
+  "main": "lib/index.js",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "array-shuffle": "^2.0.0",
+    "bip39": "^3.0.3",
+    "crypto-js": "^4.0.0",
+    "skynet-js": "^3.0.0"
+  }
+}
