@@ -1,6 +1,10 @@
 # griffin
 
-Notice: Much of what is promised has not been implemented or tested. This project is in an experimental state and primarily intended for my own personal use cases right now. After experimenting with real world apps and use cases I will make the project more unopinionated and open to the public.
+**Notice:** 
+
+**Much of what is promised has not been implemented or tested. This project is in an experimental state and primarily intended for my own personal use cases right now. After experimenting with real world apps and use cases I will make the project more unopinionated and open to the public.**
+
+**Feel free to use the library however you wish, just keep in mind that it is not production ready. If you want to live on the cutting edge and experiment with it go right ahead! I'm currently busy making Griffin meet my own needs, however feel free to send a PR that meets yours!**
 
 A peer-to-peer document-oriented database. Take back ownership over your data!
 
