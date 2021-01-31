@@ -1,5 +1,7 @@
 # griffin
 
+Notice: Much of what is promised has not been implemented or tested. This project is in an experimental state and primarily intended for my own personal use cases right now. After experimenting with real world apps and use cases I will make the project more unopinionated and open to the public.
+
 A peer-to-peer document-oriented database. Take back ownership over your data!
 
 Griffin is a decentralized database powered by [GUN](https://github.com/amark/gun) that implements an API and query language similar to MongoDB. All data stored is automatically encrypted and distributed over a peer-to-peer network and can optionally be shared with others. It is a truly powerful database solution.
@@ -7,8 +9,6 @@ Griffin is a decentralized database powered by [GUN](https://github.com/amark/gu
 You have zero chance of ever losing your data. You start out with localStorage. When localStorage fails, you can attempt to pull data from the WebRTC network or the storage relay you last used. When the relay goes down or the browsers storing your data go offline, you can pull data from Sia SkynetDB as the browser version uses [Zenbase](https://github.com/Fluffy9/Zenbase). And if all else fails, you can pull data from other relays in the network as a Kademlia DHT that all Griffin relays have access to is used to back everything up as well.
 
 Seems overkill? That's because it is. But it is extremely important that users NEVER lose ANY of their data EVER. Griffin empowers developers with limited resources with a never failing backup plan so that even people living in their mother's basement can create production grade decentralized applications without headache.
-
-Notice: The data sharing API has not been started and the database is not thoroughly tested. Collaborative applications are probably currently better off using GUN itself and there is no guarantee that the database is production ready.
 
 ## Usage
 
@@ -66,11 +66,3 @@ Griffin.server({
 	},
 })
 ```
-
-## Donations
-
-Feel free to donate! I plan on implementing the entire MongoDB API, a file storage API based on Sia/Skynet and other features involving shared data.
-
-I can work on this much more frequently with a more sustainable income. All donations will go to living expenses, assets, servers and Sia file storage costs (I plan on running my own Skynet portal).
-
-Liberapay: https://liberapay.com/giraffekey/
