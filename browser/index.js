@@ -14,7 +14,7 @@ function Griffin(options) {
 	}
 
 	const gun = Gun({
-		peers: options.peers || options,
+		peers: options.peers || Object.prototype.toString.call(options) === "[object Object]" ? undefined : options,
 		...options.skynet,
 	})
 
@@ -40,7 +40,7 @@ function Griffin(options) {
 	}
 
 	const backup = (key, data) => {
-		const peers = shuffle(localStorage.getItem("peers"))
+		const peers = localStorage.getItem("peers") ? shuffle(localStorage.getItem("peers")) : []
 		const amount = Math.min(options.backup || 2, peers.length)
 		const body = {
 			key,
@@ -69,7 +69,7 @@ function Griffin(options) {
 	}
 
 	const retrieve = (key, on) => {
-		const peers = shuffle(localStorage.getItem("peers"))
+		const peers = localStorage.getItem("peers") ? shuffle(localStorage.getItem("peers")) : []
 
 		let retry = 1
 

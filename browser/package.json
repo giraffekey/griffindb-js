@@ -1,8 +1,8 @@
 {
 	"name": "griffin-browser",
-	"version": "0.1.6",
+	"version": "0.1.10",
 	"main": "index.js",
-	"license": "MIT",
+	"license": "GPL-3.0",
 	"dependencies": {
 		"array-shuffle": "^2.0.0",
 		"griffin-core": "0.1.5",
