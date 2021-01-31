@@ -128,7 +128,7 @@ function find(SEA, col, indices, key, retrieve, query, options) {
 				})
 			}
 
-			res(docs)
+			res(options.one && docs.length === 0 ? null : docs)
 		}
 	})
 }

@@ -1,3 +1,5 @@
 node_modules
 radata
+browser/core
+node/core
 test.js

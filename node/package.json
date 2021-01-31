@@ -2,7 +2,7 @@
 	"name": "griffin-nodejs",
 	"version": "0.1.17",
 	"main": "index.js",
-	"license": "MIT",
+	"license": "GPL-3.0",
 	"dependencies": {
 		"address": "^1.1.2",
 		"array-shuffle": "^2.0.0",
