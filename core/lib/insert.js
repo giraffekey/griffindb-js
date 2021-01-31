@@ -3,6 +3,7 @@ const pmap = require("promise.map")
 const { clean } = require("./util")
 
 function insert(SEA, col, key, backup, docs, options) {
+	console.log("insertion pending")
 	return new Promise(async (res, rej) => {
 		if (options.one) docs = [docs]
 		else if (!Array.isArray(docs)) {
