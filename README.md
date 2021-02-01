@@ -1,6 +1,6 @@
 # griffin
 
-Griffin is a decentralized, offline-first, document-oriented database built on the Sia blockchain.
+Griffin is a decentralized, offline-first, key-value based, document-oriented database built on the Sia blockchain.
 
 ## Usage
 
