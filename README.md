@@ -38,7 +38,7 @@ console.log(await dogs.find({ age: { $lt: 7, $gte: 3 } }).limit(10).many())
 
 // Update/replace
 await dogs.update({ age: 5 }, { $inc: { age: 1 } }).one()
-await dogs.replace({ name: "Gordon" }, { name: "Gordon Ramsey", color: "blonde", age: 54, owners: null })
+await dogs.replace({ name: "Gordon" }, { name: "Gordon Ramsey", color: "blonde", age: 54, owners: null }).one()
 
 // Key-value store
 await db.set("username", "gnufag")

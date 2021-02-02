@@ -14,9 +14,11 @@ async function main() {
     { name: "Snuffles", color: "brown", age: 7, owners: ["Karen"] },
   ]).many()
   console.log(await dogs.find({ age: 5 }).one())
-  // await dogs.update({ age: 5 }, { $inc: { age: 1 } }).one()
-  // console.log(await dogs.find({ age: 6 }).one())
-  // await dogs.replace({ name: "Gordon" }, { name: "Gordon Ramsey", color: "blonde", age: 54, owners: null })
-  // console.log(await dogs.find({ name: "Gordon" }).one())
+  await dogs.update({ age: 5 }, { $inc: { age: 1 } }).one()
+  console.log(await dogs.find({ age: 6 }).one())
+  await dogs.replace({ name: "Gordon" }, { name: "Gordon Ramsey", color: "blonde", age: 54, owners: null }).one()
+  console.log(await dogs.find({ color: "blonde" }).one())
+  await dogs.remove({ age: { $gt: 50 }}).one()
+  console.log(await dogs.find().many())
 }
 main()
