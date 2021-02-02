@@ -25,10 +25,10 @@ const dogs = db.collection("dogs")
 
 // Insertion
 await dogs.insert([
-	{ name: "Gordon", color: "black", age: 3, owners: ["John", "Cindy"] },
-	{ name: "Pooch", color: "brown", age: 5, owners: ["John", "Cindy"] },
-	{ name: "Snuffles", color: "brown", age: 7, owners: ["Karen"] },
-	...
+  { name: "Gordon", color: "black", age: 3, owners: ["John", "Cindy"] },
+  { name: "Pooch", color: "brown", age: 5, owners: ["John", "Cindy"] },
+  { name: "Snuffles", color: "brown", age: 7, owners: ["Karen"] },
+  ...
 ]).many()
 
 // Finds and queries
