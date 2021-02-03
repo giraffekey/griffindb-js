@@ -1,13 +1,22 @@
-const Collection = require("./lib/collection")
+const Namespace = require("./lib/namespace")
 
 let store = {}
 
-const get_kv = async (key) => store[key]
-const set_kv = async (key, value) => (store[key] = value)
+const get_ = async (_, __, key) => store[key]
+const set_ = async (_, __, key, value) => (store[key] = value)
 
-const dogs = Collection("dogs", get_kv, set_kv)
+const db = Namespace("test", get_, set_)
+const dogs = db.collection("dogs")
 
 async function main() {
+  await db.set("my-key", { pretty: "cool", and: "epic value" })
+  console.log(await db.get("my-key"))
+
+  await db.chain("first").chain("second").chain("third").set("fourth", "fifth")
+  console.log(await db.chain("first").get("second"))
+  await db.chain("first").set("another", 2)
+  console.log(await db.chain("first").keys())
+
   await dogs.insert([
     { name: "Gordon", color: "black", age: 3, owners: ["John", "Cindy"] },
     { name: "Pooch", color: "brown", age: 5, owners: ["John", "Cindy"] },
