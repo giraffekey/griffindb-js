@@ -29,5 +29,7 @@ async function main() {
   console.log(await dogs.find({ color: "blonde" }).one())
   await dogs.remove({ age: { $gt: 50 }}).one()
   console.log(await dogs.find().many())
+  await dogs.update({ age: 7 }, { $call: { owners: { push: "Karol" } } }).one()
+  console.log(await dogs.find().many())
 }
 main()
