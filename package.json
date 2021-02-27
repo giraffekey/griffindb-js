@@ -2,7 +2,7 @@
   "name": "griffindb",
   "version": "0.1.0",
   "main": "lib/index.js",
-  "license": "BSD-2-Clause",
+  "license": "BSD-3-Clause",
   "dependencies": {
     "array-shuffle": "^2.0.0",
     "bip39": "^3.0.3",
