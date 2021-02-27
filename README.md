@@ -8,8 +8,6 @@ Developers are empowered with a flexible and easy-to-use database that can funct
 
 ## Usage
 
-Note: None of this is implemented yet
-
 `npm i griffindb`
 
 `yarn add griffindb`
