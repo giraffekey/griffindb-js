@@ -12,6 +12,8 @@ Developers are empowered with a flexible and easy-to-use database that can funct
 
 `yarn add griffindb`
 
+`openbits install griffindb`
+
 ```js
 import Griffin from "griffin-browser"
 

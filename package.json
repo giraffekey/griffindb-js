@@ -1,8 +1,9 @@
 {
   "name": "griffindb",
+  "author": "cerebralcourt",
   "version": "0.1.0",
   "main": "lib/index.js",
-  "license": "BSD-3-Clause",
+  "license": "MIT",
   "dependencies": {
     "array-shuffle": "^2.0.0",
     "bip39": "^3.0.3",
