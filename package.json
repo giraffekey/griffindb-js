@@ -1,6 +1,6 @@
 {
   "name": "griffindb",
-  "author": "cerebralcourt",
+  "author": "giraffekey",
   "version": "0.1.0",
   "main": "lib/index.js",
   "license": "MIT",
@@ -8,6 +8,7 @@
     "array-shuffle": "^2.0.0",
     "bip39": "^3.0.3",
     "crypto-js": "^4.0.0",
+    "level": "^8.0.0",
     "promise.map": "^0.3.1",
     "skynet-js": "^3.0.0",
     "uuid": "^8.3.2"
