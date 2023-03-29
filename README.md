@@ -1,5 +1,7 @@
 # griffin
 
+**NOTICE** This project never went beyond the idea phase and was never implemented into a working project. The code in this repository does not work.
+
 Griffin is a decentralized, offline-first, key-value based, document-oriented database built on the Sia blockchain.
 
 Users are empowered with the ability to store their own easily accessible encrypted data permanently without relying on centralized providers.
